@@ -29,10 +29,8 @@ SOAP is a protocol for exchanging structured information in web services. It use
 Example Script using 'zeep' library:
 
 from zeep import Client
-
 #Create a SOAP client 
 client = Client('https://www.example.com/soap-endpoint?wsdI')
-
 #Call a SOAP operation 
 result = client.service.SomeOperation( parameter1='value', parameter2='value2')
 print(result)
@@ -75,7 +73,6 @@ client.on_connect=on_connect
 client.on_message=on_message
 
 client.connect("mqtt.eclipse.org", 1883, 60)
-
 client.loop_forever()
 
 
@@ -96,7 +93,8 @@ start_server= websockets.server(echo, "localhost", 8765)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
 
-N/B: You may need to install additional libraries before running these scripts using pip install ('requests','zeep','paho-mqtt', 'websockets'). The URLs and endpoints used in these examples are placeholders thus should be replaced with actual values from the integration scenario. 
+N/B: You may need to install additional libraries before running these scripts using pip install ('requests','zeep','paho-mqtt', 'websockets'). 
+The URLs and endpoints used in these examples are placeholders thus should be replaced with actual values from the integration scenario. 
 
 
 ...............................................................................................................
@@ -105,7 +103,8 @@ N/B: You may need to install additional libraries before running these scripts u
 QUESTION 2: 
  Give a walkthrough of how you will manage a data streaming application sending one million notifications every hour while giving examples of technologies and configurations you will use to manage load and asynchronous services. (10Points)
 
- - A data streaming application that sends one million notifications every hour requires careful consideration of scalability, reliability,and efficiency. Lets work this out in a logical design pattern using these configurations and technologies.
+ - A data streaming application that sends one million notifications every hour requires careful consideration of scalability, reliability,and efficiency. 
+Lets work this out in a logical design pattern using these configurations and technologies.
 
 1. Message Broker:
 Lets use a message broker to handle the communication between different components of your application. A popular choice is Apache Kafka
@@ -135,8 +134,7 @@ consumer.subsribe(['notification_topic'])
 
 while True:
     msg = consumer.poll(1.0)
-
-    if msg is None:
+     if msg is None:
         continue 
     if msg.error():
        if msg.error().code() == KafkaError._PARTITION_EOF: 
@@ -144,7 +142,6 @@ while True:
        else: 
            print(msg.error())
            break 
-
       #Process the Notification asynchronously 
       process_notification(msg.value())
 
@@ -171,7 +168,7 @@ def process_notification(notification):
 Deploy multiple instances of your notification services and utilizes a load balancer to distribute the load evenly. 
 
 Example Using NGINX as a load balancer: 
- upstream notification_servers {
+    upstream notification_servers {
     server server1.example.com;
     server server2 .example.com;
     #Add more server as needed
@@ -180,8 +177,7 @@ Example Using NGINX as a load balancer:
  server {
     Listen 80;
     server_name notification.example.com; 
-
-    Location/ {
+   Location/ {
         proxy_pass http://notification_servers;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -219,9 +215,9 @@ Example Using NGINX as a load balancer:
      scrap_configs: 
          - job_name: 'notification-service'
          static_configs:
-           - targets: [ 'notifications-service: 8000']
+targets: [ 'notifications-service: 8000']
 
-7. Rate limiting implementation 
+7. Rate-limiting implementation 
     #install redis-py 
     pip install redis 
 
@@ -231,45 +227,35 @@ Example Using NGINX as a load balancer:
     #Connect to Redis 
     redis_client= redis.StrictRedis(host='localhost', port= 6379, db=0)
 
-    def rate_limit(key, limit, period):
+def rate_limit(key, limit, period):
          current-time = time.time()
          key= f'rate_limit:{key}'
          pipeline= redis_client.pipeline()
-
-         #Remove old entries 
+          #Remove old entries 
          pipeline.zremrangebyscore(key, '-inf', current_time -period)
-
          #Add the current entry 
          pipeline.zadd(key, {current_time: current_time})
-
          #Get the total count 
          pipeline.zcard(key)
-
          #Execute the pipeline 
          _,_, count = pipleine.excute()
-
          #Check if the count exceeds the limit
          return count<= limit
 
 8. Error Handling 
          Design a robust error-handling mechanism to deal with failed notifications and ensure reliable delivery. Implement retries, dead-letter queuses, and logging for effective error management. 
-
-         from celery import Celery 
-          
-        app= Celery('tasks', broker = 'pyamqp://guest:guest@localhost//')
+          from celery import Celery 
+          app= Celery('tasks', broker = 'pyamqp://guest:guest@localhost//')
         app.conf.task_reject_on_worker_lost= True 
 
-
-        @app.task(bind=True , maz_retries=3, default_retry_delay=60)
+    @app.task(bind=True , maz_retries=3, default_retry_delay=60)
         def process_notification(self, notification):
         try: 
 
-               #process the notification 
-               send_notification(notification)
-
-          except Exception as exc: 
-
-               #Log the error 
+    #process the notification 
+   send_notification(notification)
+   except Exception as exc: 
+   #Log the error 
                print(f' Retrying tasks due to exception: {exc}')    
                #Retry the task 
                raise self.retry()
