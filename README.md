@@ -1,5 +1,4 @@
 # Django-Project-Test-
-# Django-Project-Test-
 
 SECTION A 
 
