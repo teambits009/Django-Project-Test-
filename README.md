@@ -380,6 +380,18 @@ print(f"Encrypted Data: {encrypted_data}")
 print(f"Decrypted Data: {encrypted_data}")
 
 
+SECTION B: 
+
+Number 2:
+Create a search and results page using Django and postgreSQL database. The 
+Django application should be deployed on uwsgi/nginx webserver and NOT 
+the development server. This should also be deployed on a red-hat based 
+Linux environment or an alpine docker image container. (60 pts)
+
+
+
+
+
 
 
 
