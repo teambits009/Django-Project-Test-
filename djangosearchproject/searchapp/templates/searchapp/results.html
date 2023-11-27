@@ -1,0 +1,14 @@
+{% extends 'searchapp/base.html' %}
+
+{% block title %}Search Results - My Django App{% endblock %}
+
+{% block content %}
+    <h1>Search Results:</h1>
+    <ul class="list-group">
+    {% for item in items %}
+        <li class="list-group-item">{{ item.name }} - {{ item.description }}</li>
+    {% empty %}
+        <li class="list-group-item">No results found.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'searchapp/base.html' %}
+
+{% block title %}Search Page - My Django App{% endblock %}
+
+{% block content %}
+    <h1>Search Page</h1>
+    <form action="{% url 'results' %}" method="GET">
+        <input type="text" name="query" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+{% endblock %}
