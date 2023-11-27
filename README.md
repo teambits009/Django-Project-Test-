@@ -388,6 +388,160 @@ Django application should be deployed on uwsgi/nginx webserver and NOT
 the development server. This should also be deployed on a red-hat based 
 Linux environment or an alpine docker image container. (60 pts)
 
+SECTION B: 
+
+Number 2:
+Create a search and results page using Django and postgreSQL database. The 
+Django application should be deployed on uwsgi/nginx webserver and NOT 
+the development server. This should also be deployed on a red-hat based 
+Linux environment or an alpine docker image container. (60 pts)
+
+The walkthrough will cover creating a Django project, defining a models, setting up the views and templates, integrating PostgreSQL, and deploying the application
+
+  Focused on creating a search and results page using Django and PostrgreSQL database .
+
+  Step 1: Set Up Django Project
+
+  Install Django: 
+  pip install django
+
+  ![Alt text](images/Images/project2.jpg)
+
+  create a New Django Project and App 
+  
+  django-admin startproject djangosearchproject
+  cd myproject 
+  python manage.py startapp searchapp
+
+  ![Alt text](<images/Images/project 1.jpg>)
+
+ Step 2: Define the Model
+ Open 'searchapp' in a text editor 
+
+   from django.db import models 
+
+   class Item(models.Model):
+         name=models.CharField(max_length=255)
+         description = model.TextField()
+
+   def __str__ (self):
+            return self.name
+ python manage.py makemigrations
+            python manage.py migrate
+
+   Step 3: Create Views and Templates
+     Open 'searchapp/views.py' in a text editor 
+     create a view to handle the search functionality
+
+  #myapp/views.py 
+
+   from django.shortcuts import render
+     from .models import Item 
+
+   def search(request):
+          query = request.GET.get('q')
+          results = Item.objects.filter(name_-icontains=query)if query else []
+          return render(request, 'search_results.html', {'query': query, 'results': results})
+
+   Create 'search-results.html' in the templates folder
+    inside the searchapp folder,create a new folder named templates'.
+    create a new file named 'search_results.html' and add the HTML codes to display search results. 
+
+   Step 4: Configure the URLS
+    open 'myapp/urls.py' in a text editor 
+
+  define the URL patterns for your app
+
+   from django.urls import path 
+    from .views import search
+
+  urlpatterns =[
+        path('search/', search, name= 'search'),
+
+   Include these URLS in the 'djangosearchproject' and include the URLS from your app
+
+  from django.contrib import admin
+    from django.urls import include, path 
+
+  url patterns= [
+        path('admin/', admin.site.urls),
+        path('searchapp/', include('searchapp.urls')),
+    ]
+    ]
+    
+  Step5: Configure PostgreSQL
+     install 'psycopg2'
+
+  Update Database Settings in 'djangosearchproject.py'
+      Updates the 'DATABASES' configuration to use PostgreSQL.
+
+   #myproject/settings.py
+      
+  DATABASES = {
+        'default':{
+            'ENGINE' : 'django.db.backends.postgresql',
+            'NAME': 'Opere_inter',
+            'USER': 'postgres',
+            'PASSWORD': 'brandonopere008', 
+            'HOST': 'localhost',
+            'PORT': '5432'
+        }
+      }
+
+Step 6: Test Locally 
+
+python manage.py runserver 
+
+Open the Web browser 
+ Go to http://localhost:8000/searchapp/' and test your search page.
+
+ Step 7> Deploy with uWSGI and Nginx
+ install uWSGI 
+
+pip install uwsgi 
+
+create a 'uwsgi.ini' File 
+Configure uWSGI in a file names 'uwsgi.ini'.
+
+[uwsgi]
+
+module = djangosearchproject.wsgi:application
+Configure the Nginx; Install Nginx and configure it to forward requests to uWSGI 
+
+  ![Alt text](images/Images/Project3.jpg)
+
+  Step 8: Deploy with Docker 
+  Create a file named 'Dockerfile' to build your docker image 
+
+  # Dockerfile 
+  FROM python: 3.8-alpine 
+
+  WORKDIR /APP
+
+  COPY requirements.txt.
+  RUN pip install --no-cache-dir -r requirements.txt 
+
+  COPY  .  .
+  CMD ["uwsgi", "--ini", "uwsgi.ini"]
+
+  ![Alt text](images/Images/project4.jpg)
+
+Create a requirement.txt File 
+List your project dependencies in a file named 'requirements.txt'.
+
+Build and Run Docker Container
+
+docker build -t djangosearchproject 
+docker run -p 8000:8000 djangosearchproject 
+  ![Alt text](images/Images/project5.jpg)
+  ![Alt text](images/Images/project6.jpg)
+  Test Your Dockerized App:
+  Open a web browser and go to 'http://localhost:8000/searchapp/djangosearchproject/' to esnure everything works. 
+ ![Alt text](images/Images/project7.jpg)
+
+This detailed walkthrough covers each step of creating a search and results page using django with PostgreSQL. It includes configuring the databases, creating views and templates , and deploying the application locally and in a docker container. If you have any questions or encounter issues at any step feel free to ask for further clarification. 
+
+
 
 
 
